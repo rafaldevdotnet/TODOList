@@ -50,6 +50,18 @@ namespace TODOList.Endpoints
                 if (result) return Results.Ok("Record update successful");
                 return Results.BadRequest("Error while updating record");
             });
+
+            app.MapPut("/todo/{id}/{percent}", async (int id,int percent, IMediator mediator) =>
+            {
+                var todoRecord = await mediator.Send(new GetTodoByIDQuery(id));
+                if (todoRecord == null) return Results.NotFound($"Not found todo record on ID: {id}");
+
+                var result = await mediator.Send(new UpdateTodoCommand(todoRecord, new Todo() { PercentComplete = percent }));
+                if (result) return Results.Ok("Record update successful");
+                return Results.BadRequest("Error while updating record");
+            });
+
+            
             //app.MapGet("/todos/{id}", async (int id, TodoContext db) =>
             //    await db.Todos.FindAsync(id) is Todo todo
             //        ? Results.Ok(todo)
