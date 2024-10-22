@@ -40,64 +40,79 @@ namespace TODOList.Endpoints
                 if (result > 0) return Results.Created($"/todo/{result}", todo);
                 return Results.BadRequest("Error while creating new todo record");
             });
+
+            app.MapPut("/todo", async (Todo updateTodo, IMediator mediator) =>
+            {
+                var todoRecord = await mediator.Send(new GetTodoByIDQuery(updateTodo.Id));
+                if (todoRecord == null) return Results.NotFound($"Not found todo record on ID: {updateTodo.Id}");
+                
+                var result = await mediator.Send(new UpdateTodoCommand(todoRecord, updateTodo));
+                if (result) return Results.Ok("Record update successful");
+                return Results.BadRequest("Error while updating record");
+            });
             //app.MapGet("/todos/{id}", async (int id, TodoContext db) =>
             //    await db.Todos.FindAsync(id) is Todo todo
             //        ? Results.Ok(todo)
             //        : Results.NotFound());
 
-                    //app.MapPost("/todos", async (Todo todo, TodoContext db) =>
-                    //{
-                    //    if (!ValidateTodo(todo))
-                    //        return Results.BadRequest("Invalid Todo data");
+            //app.MapPost("/todos", async (Todo todo, TodoContext db) =>
+            //{
+            //    if (!ValidateTodo(todo))
+            //        return Results.BadRequest("Invalid Todo data");
 
-                    //    db.Todos.Add(todo);
-                    //    await db.SaveChangesAsync();
-                    //    return Results.Created($"/todos/{todo.Id}", todo);
-                    //});
+            //    db.Todos.Add(todo);
+            //    await db.SaveChangesAsync();
+            //    return Results.Created($"/todos/{todo.Id}", todo);
+            //});
 
-                    //app.MapPut("/todos/{id}", async (int id, Todo updatedTodo, TodoContext db) =>
-                    //{
-                    //    var todo = await db.Todos.FindAsync(id);
-                    //    if (todo is null) return Results.NotFound();
+            //app.MapPut("/todos/{id}", async (int id, Todo updatedTodo, TodoContext db) =>
+            //{
+            //    var todo = await db.Todos.FindAsync(id);
+            //    if (todo is null) return Results.NotFound();
 
-                    //    todo.Title = updatedTodo.Title;
-                    //    todo.Description = updatedTodo.Description;
-                    //    todo.ExpiryDate = updatedTodo.ExpiryDate;
-                    //    todo.PercentComplete = updatedTodo.PercentComplete;
+            //    todo.Title = updatedTodo.Title;
+            //    todo.Description = updatedTodo.Description;
+            //    todo.ExpiryDate = updatedTodo.ExpiryDate;
+            //    todo.PercentComplete = updatedTodo.PercentComplete;
 
-                    //    await db.SaveChangesAsync();
-                    //    return Results.NoContent();
-                    //});
+            //    await db.SaveChangesAsync();
+            //    return Results.NoContent();
+            //});
 
-                    //app.MapDelete("/todos/{id}", async (int id, TodoContext db) =>
-                    //{
-                    //    var todo = await db.Todos.FindAsync(id);
-                    //    if (todo is null) return Results.NotFound();
+            //app.MapDelete("/todos/{id}", async (int id, TodoContext db) =>
+            //{
+            //    var todo = await db.Todos.FindAsync(id);
+            //    if (todo is null) return Results.NotFound();
 
-                    //    db.Todos.Remove(todo);
-                    //    await db.SaveChangesAsync();
-                    //    return Results.NoContent();
-                    //});
+            //    db.Todos.Remove(todo);
+            //    await db.SaveChangesAsync();
+            //    return Results.NoContent();
+            //});
         }
 
-        private static bool ValidateTodo(CreateTodoDto todo, out string error)
+        private static bool ValidateTodo(object todo, out string error)
         {
+
             string errorMessage = string.Empty;
-            if (string.IsNullOrWhiteSpace(todo.Title))
+            if (todo is CreateTodoDto)
             {
-                errorMessage += "Title is required.\n";
-            }
-            if (string.IsNullOrWhiteSpace(todo.Description))
-            {
-                errorMessage += "Description is required.\n";
-            }
-            if (todo.ExpiryDate == DateTime.MinValue)
-            {
-                errorMessage += "Expiry date is required.\n";
-            }
-            if (todo.ExpiryDate < DateTime.Today)
-            {
-                errorMessage += $"The expiry date cannot be less than {DateTime.Today}\n";
+                var Ctodo = (CreateTodoDto)todo;
+                if (string.IsNullOrWhiteSpace(Ctodo.Title))
+                {
+                    errorMessage += "Title is required.\n";
+                }
+                if (string.IsNullOrWhiteSpace(Ctodo.Description))
+                {
+                    errorMessage += "Description is required.\n";
+                }
+                if (Ctodo.ExpiryDate == DateTime.MinValue)
+                {
+                    errorMessage += "Expiry date is required.\n";
+                }
+                if (Ctodo.ExpiryDate < DateTime.Today)
+                {
+                    errorMessage += $"The expiry date cannot be less than {DateTime.Today}\n";
+                }
             }
             error = errorMessage;
             return string.IsNullOrWhiteSpace(errorMessage);

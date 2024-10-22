@@ -26,7 +26,7 @@ namespace TODOList.Infrastructure.Implementation
 
         public async Task<Todo?> GetByIdAsync(int id)
         {
-            return await _dbContext.Todos.FindAsync(id);
+            return await _dbContext.Todos.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<List<Todo>> GetByDatesAsync(DateTime dateFrom, DateTime dateTo)
@@ -34,17 +34,11 @@ namespace TODOList.Infrastructure.Implementation
             return await _dbContext.Todos.Where(x => x.ExpiryDate >= dateFrom && x.ExpiryDate <= dateTo).ToListAsync();
         }
 
-        public async Task<int> AddAsync(CreateTodoDto todo)
+        public async Task<int> AddAsync(Todo todo)
         {
-            var result = await _dbContext.Todos.AddAsync(new Todo
-            {
-                Title = todo.Title,
-                Description = todo.Description,
-                ExpiryDate = todo.ExpiryDate
-            });
+            var result = await _dbContext.Todos.AddAsync(todo);
             await _dbContext.SaveChangesAsync();
-            var t = result.Entity;
-            return t.Id;
+            return result.Entity.Id;
         }
 
         public async Task<bool> UpdateAsync(Todo todo)

@@ -9,26 +9,16 @@ using TODOList.Domain.Entities;
 
 namespace TODOList.Application.TODO.Queries
 {
-    public class GetTodoByIDQuery :IRequest<Todo>
+    public class GetTodoByIDQuery(int id) : IRequest<Todo>
     {
-        public GetTodoByIDQuery(int id)
-        {
-            Id = id;
-        }
-        public int Id { get; set; }
+        public int Id { get; } = id;
     }
 
-    public class GetTodoByIDQueryHandler : IRequestHandler<GetTodoByIDQuery, Todo>
+    public class GetTodoByIDQueryHandler(ITodoRepository todoRepository) : IRequestHandler<GetTodoByIDQuery, Todo>
     {
-        private readonly ITodoRepository _todoRepository;
-        public GetTodoByIDQueryHandler(ITodoRepository todoRepository)
-        {
-            _todoRepository = todoRepository;
-        }
-
         public async Task<Todo> Handle(GetTodoByIDQuery request, CancellationToken cancellationToken)
         {
-            var todo = await _todoRepository.GetByIdAsync(request.Id);
+            var todo = await todoRepository.GetByIdAsync(request.Id);
             return todo;
         }
     }

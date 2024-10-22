@@ -9,28 +9,17 @@ using TODOList.Domain.Entities;
 
 namespace TODOList.Application.TODO.Queries
 {
-    public class GetTodoByDatesQuery : IRequest<List<Todo>>
+    public class GetTodoByDatesQuery(DateTime dateFrom, DateTime dateTo) : IRequest<List<Todo>>
     {
-        public GetTodoByDatesQuery(DateTime dateFrom, DateTime dateTo)
-        {
-            DateFrom = dateFrom;
-            DateTo = dateTo;
-        }
-        public DateTime DateFrom { get; set; }
-        public DateTime DateTo { get; set; }
+        public DateTime DateFrom { get; } = dateFrom;
+        public DateTime DateTo { get; } = dateTo;
     }
 
-    public class GetTodoByDatesQueryHandler : IRequestHandler<GetTodoByDatesQuery, List<Todo>>
+    public class GetTodoByDatesQueryHandler(ITodoRepository todoRepository) : IRequestHandler<GetTodoByDatesQuery, List<Todo>>
     {
-        private readonly ITodoRepository _todoRepository;
-        public GetTodoByDatesQueryHandler(ITodoRepository todoRepository)
-        {
-            _todoRepository = todoRepository;
-        }
-
         public async Task<List<Todo>> Handle(GetTodoByDatesQuery request, CancellationToken cancellationToken)
         {
-            var todos = await _todoRepository.GetByDatesAsync(request.DateFrom, request.DateTo);
+            var todos = await todoRepository.GetByDatesAsync(request.DateFrom, request.DateTo);
             return todos;
         }
     }

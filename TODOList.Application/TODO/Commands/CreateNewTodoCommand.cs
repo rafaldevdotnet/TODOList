@@ -10,26 +10,21 @@ using TODOList.Domain.Entities;
 
 namespace TODOList.Application.TODO.Commands
 {
-    public class CreateNewTodoCommand : IRequest<int>
+    public class CreateNewTodoCommand(CreateTodoDto todo) : IRequest<int>
     {
-        public CreateNewTodoCommand(CreateTodoDto todo)
-        {
-            Todo = todo;
-        }
-        public CreateTodoDto Todo { get; set; }
+        public CreateTodoDto Todo { get; } = todo;
     }
 
-    public class CreateNewTodoCommandHandler : IRequestHandler<CreateNewTodoCommand, int>
+    public class CreateNewTodoCommandHandler(ITodoRepository todoRepository) : IRequestHandler<CreateNewTodoCommand, int>
     {
-        private readonly ITodoRepository _todoRepository;
-        public CreateNewTodoCommandHandler(ITodoRepository todoRepository)
-        {
-            _todoRepository = todoRepository;
-        }
-
         public async Task<int> Handle(CreateNewTodoCommand request, CancellationToken cancellationToken)
         {
-            int id = await _todoRepository.AddAsync(request.Todo);
+            int id = await todoRepository.AddAsync(new Todo()
+            {
+                Title = request.Todo.Title,
+                Description = request.Todo.Description,
+                ExpiryDate = request.Todo.ExpiryDate
+            });
 
             return id;
         }
