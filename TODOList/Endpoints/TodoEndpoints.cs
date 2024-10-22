@@ -70,44 +70,16 @@ namespace TODOList.Endpoints
                 if (result) return Results.Ok("Record update successful");
                 return Results.BadRequest("Error while updating record");
             });
-            //app.MapGet("/todos/{id}", async (int id, TodoContext db) =>
-            //    await db.Todos.FindAsync(id) is Todo todo
-            //        ? Results.Ok(todo)
-            //        : Results.NotFound());
 
-            //app.MapPost("/todos", async (Todo todo, TodoContext db) =>
-            //{
-            //    if (!ValidateTodo(todo))
-            //        return Results.BadRequest("Invalid Todo data");
+            app.MapDelete("/todo/{id}", async (int id, IMediator mediator) =>
+            {
+                var todoRecord = await mediator.Send(new GetTodoByIDQuery(id));
+                if (todoRecord == null) return Results.NotFound($"Not found todo record on ID: {id}");
 
-            //    db.Todos.Add(todo);
-            //    await db.SaveChangesAsync();
-            //    return Results.Created($"/todos/{todo.Id}", todo);
-            //});
-
-            //app.MapPut("/todos/{id}", async (int id, Todo updatedTodo, TodoContext db) =>
-            //{
-            //    var todo = await db.Todos.FindAsync(id);
-            //    if (todo is null) return Results.NotFound();
-
-            //    todo.Title = updatedTodo.Title;
-            //    todo.Description = updatedTodo.Description;
-            //    todo.ExpiryDate = updatedTodo.ExpiryDate;
-            //    todo.PercentComplete = updatedTodo.PercentComplete;
-
-            //    await db.SaveChangesAsync();
-            //    return Results.NoContent();
-            //});
-
-            //app.MapDelete("/todos/{id}", async (int id, TodoContext db) =>
-            //{
-            //    var todo = await db.Todos.FindAsync(id);
-            //    if (todo is null) return Results.NotFound();
-
-            //    db.Todos.Remove(todo);
-            //    await db.SaveChangesAsync();
-            //    return Results.NoContent();
-            //});
+                var result = await mediator.Send(new DeleteTodoCommand(id));
+                if (result) return Results.Ok("Record deleted successful");
+                return Results.BadRequest("Error while deleting record");
+            });
         }
 
         private static bool ValidateTodo(object todo, out string error)
