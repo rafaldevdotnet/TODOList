@@ -1,6 +1,4 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
-using TODOList.Application;
 using TODOList.Application.TODO.Commands;
 using TODOList.Application.TODO.DTOs;
 using TODOList.Application.TODO.Queries;
