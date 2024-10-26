@@ -1,8 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Xunit;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using TODOList.Infrastructure;
 using TODOList.Infrastructure.Implementation;
 using TODOList.Domain.Entities;
 
@@ -12,6 +8,7 @@ namespace TODOList.Infrastructure.Tests
     {
         private TodoContext CreateInMemoryDbContext(string nameDB)
         {
+            // Create a new DbContext with an in-memory database for testing
             var options = new DbContextOptionsBuilder<TodoContext>()
                 .UseInMemoryDatabase(databaseName: nameDB)
                 .Options;
@@ -83,7 +80,6 @@ namespace TODOList.Infrastructure.Tests
             Assert.Equal("Todo 1", todos[0].Title);
         }
 
-
         [Fact]
         public async Task AddAsync_ShouldAddTodoToDatabase()
         {
@@ -118,12 +114,10 @@ namespace TODOList.Infrastructure.Tests
 
             var todo = new Todo { Title = "Old Todo", Description = "Old Description", ExpiryDate = DateTime.Now, PercentComplete = 0, IsDone = false };
             var id = await repository.AddAsync(todo);
-            context.Entry(todo).State = EntityState.Detached;
-            // Pobierz obiekt, a następnie odłącz od kontekstu, by uniknąć konfliktu z śledzeniem
-            var existingTodo = await repository.GetByIdAsync(id);
-            //context.Entry(existingTodo).State = EntityState.Detached;
 
-            // Twórz zmienioną instancję
+            context.Entry(todo).State = EntityState.Detached; // Pobierz obiekt, a następnie odłącz od kontekstu, by uniknąć konfliktu z śledzeniem
+
+            var existingTodo = await repository.GetByIdAsync(id);
             existingTodo.Title = "Updated Todo";
             existingTodo.Description = "Updated Description";
             existingTodo.PercentComplete = 50;
@@ -140,8 +134,6 @@ namespace TODOList.Infrastructure.Tests
             Assert.Equal(50, fetchedTodo.PercentComplete);
             Assert.True(fetchedTodo.IsDone);
         }
-
-
 
         [Fact]
         public async Task DeleteAsync_ShouldRemoveTodoFromDatabase()

@@ -12,8 +12,8 @@ namespace TODOList.Endpoints
         {
             app.MapGet("/todos", async (IMediator mediator) =>
             {
-                var todos = await mediator.Send(new GetAllTodosQuery()); // Przesyłamy zapytanie do MediatR
-                return Results.Ok(todos); // Zwracamy wyniki
+                var todos = await mediator.Send(new GetAllTodosQuery()); // Send request to mediator
+                return Results.Ok(todos); // Return response
             });
 
             app.MapGet("/todo/{id}", async (int id, IMediator mediator) =>

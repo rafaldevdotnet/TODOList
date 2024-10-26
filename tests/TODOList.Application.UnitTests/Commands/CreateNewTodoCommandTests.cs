@@ -1,23 +1,18 @@
 ﻿using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using TODOList.Application.TODO.DTOs;
 using TODOList.Application.Interfaces;
 using TODOList.Application.TODO.Commands;
-using TODOList.Application.TODO.Queries;
 using TODOList.Application.UnitTests.Mocks;
-using TODOList.Application.TODO.DTOs;
 
 namespace TODOList.Application.UnitTests.Commands
 {
     public class CreateNewTodoCommandTests
-    {
+    {        
         private readonly Mock<ITodoRepository> _todoRepository;
 
         public CreateNewTodoCommandTests()
         {
+            
             _todoRepository = MocksRepositories.GetTodoRepository();
         }
 

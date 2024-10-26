@@ -1,9 +1,4 @@
 ﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TODOList.Application.Interfaces;
 using TODOList.Domain.Entities;
 
@@ -18,8 +13,8 @@ namespace TODOList.Application.TODO.Queries
     {
         public async Task<Todo> Handle(GetTodoByIDQuery request, CancellationToken cancellationToken)
         {
-            var todo = await todoRepository.GetByIdAsync(request.Id);
-            return todo;
+            return await todoRepository.GetByIdAsync(request.Id);
+            
         }
     }
 }

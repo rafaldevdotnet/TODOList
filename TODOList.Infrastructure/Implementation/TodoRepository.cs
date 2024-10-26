@@ -1,11 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TODOList.Application.Interfaces;
-using TODOList.Application.TODO.DTOs;
 using TODOList.Domain.Entities;
 
 namespace TODOList.Infrastructure.Implementation

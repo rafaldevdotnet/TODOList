@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using TODOList.Application.Interfaces;
-using TODOList.Application.TODO.Queries;
 using TODOList.Domain.Entities;
 
 namespace TODOList.Application.TODO.Queries
