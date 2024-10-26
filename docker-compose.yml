@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: todolist_db
+    environment:
+      POSTGRES_USER: todolist_user
+      POSTGRES_PASSWORD: todolist_password
+      POSTGRES_DB: todolist_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - todolist_network
+
+  app:
+    build:
+      context: .
+      dockerfile: TODOList/Dockerfile
+    container_name: todolist_app
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+      ConnectionStrings__DefaultConnection: "Host=[ENTER_DATABASE_HOST];Port=5432;Database=todolist_db;Username=todolist_user;Password=todolist_password"
+    ports:
+      - "5000:8080"  # Expose the internal port 8080 on external port 5000
+    depends_on:
+      - db
+    networks:
+      - todolist_network
+
+networks:
+  todolist_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
