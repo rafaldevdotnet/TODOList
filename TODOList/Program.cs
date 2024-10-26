@@ -15,13 +15,6 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<TodoContext>();
-    dbContext.Database.Migrate();
-}
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -31,6 +24,12 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapTodoEndpoints();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<TodoContext>();
+    dbContext.Database.Migrate();
+}
 
 app.Run();
 public partial class Program { }
