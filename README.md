@@ -27,7 +27,7 @@ You can run this application either using Docker or directly from the .NET CLI.
 
 1. **Clone the repository**:
     ```bash
-    https://github.com/rafaldevdotnet/TODOList.git
+    git clone https://github.com/rafaldevdotnet/TODOList.git
     cd todolist
     ```
 
